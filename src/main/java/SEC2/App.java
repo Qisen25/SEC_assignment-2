@@ -25,10 +25,15 @@ public class App {
             minX = getXValues("Enter a minimum x value");
             maxX = getXValues("Enter a maximum x value");
             incX = getXValues("Enter an increment value");
+
+            pyEvaluate(expression, minX, maxX, incX);
         }
         
     }
 
+    /**
+     * Get expression from users
+     */
     public static String getExpression()
     {
         String input;
@@ -42,6 +47,9 @@ public class App {
         return input;
     }
 
+    /**
+     * get Real number user input
+     */
     public static double getXValues(String prompt)
     {
         System.out.println(prompt);
@@ -51,8 +59,15 @@ public class App {
         return input;
     }
 
-    public static void evaluateExpression(String exp, double min, double max, double inc)
+    public static void pyEvaluate(String exp, double min, double max, double inc)
     {
+        PythonInterpreter py = new PythonInterpreter();
 
+        for(double x = min; x <= max; x += inc)
+        {
+            String subExp = exp.replaceAll("x", String.valueOf(x));
+            double result = ((PyFloat) py.eval("float(" + subExp + ")")).getValue();
+            System.out.println("Result: " + result);
+        }
     }
 }
