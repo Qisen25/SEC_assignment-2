@@ -44,5 +44,5 @@ application {
 }
 
 run {
-    standardInputSystem.in
+    standardInput System.in
 }
