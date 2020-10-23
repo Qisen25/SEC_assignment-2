@@ -3,12 +3,56 @@
  */
 package SEC2;
 
+import java.util.*;
+import java.nio.file.*;
+import java.io.IOException;
+import org.python.core.*;
+import org.python.util.*;
+import java.io.*;
+
+
 public class App {
-    public String getGreeting() {
-        return "Hello world.";
+
+    private static final Scanner sc = new Scanner(System.in);
+    public static void main(String[] args) 
+    {
+        double minX, maxX, incX;
+        String expression;
+
+        expression = getExpression();
+        if (!expression.isEmpty())
+        {
+            minX = getXValues("Enter a minimum x value");
+            maxX = getXValues("Enter a maximum x value");
+            incX = getXValues("Enter an increment value");
+        }
+        
     }
 
-    public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+    public static String getExpression()
+    {
+        String input;
+        
+        System.out.println("SEC Assignment 2");
+        System.out.println("Enter a math expression (unknown variables are denoted as x");
+        System.out.println("Expression:> ");
+        
+        input = sc.nextLine();
+
+        return input;
+    }
+
+    public static double getXValues(String prompt)
+    {
+        System.out.println(prompt);
+
+        double input = sc.nextDouble();
+
+        return input;
+    }
+
+    public static void evaluateExpression(String exp, double min, double max, double inc)
+    {
+
     }
 }
