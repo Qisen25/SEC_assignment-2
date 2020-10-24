@@ -8,13 +8,41 @@ import java.nio.file.*;
 import java.io.IOException;
 import org.python.core.*;
 import org.python.util.*;
+
+import api.*;
+import csv_plugin.CSVPlugin;
+import progress_plugin.ProgressPlugin;
+
 import java.io.*;
 
 
-public class App {
+public class App 
+{
+    private static class myPluginController extends PluginController
+    {
+        private List<ResultListener> obs = new ArrayList<>();
+
+        @Override
+        public void addResultListener(ResultListener resultCb)
+        {
+            obs.add(resultCb);
+        }
+
+        @Override
+        public void notifyResultListeners(double currInc, double yResult)
+        {
+            for(ResultListener p : this.obs)
+            {
+                p.resultUpdate(currInc, yResult);
+            }
+        }
+    }
+
 
     private static final Scanner sc = new Scanner(System.in);
-    public static void main(String[] args) 
+    private PluginController plugCtrl = new myPluginController();
+
+    public void run() 
     {
         double minX, maxX, incX;
         String expression;
@@ -26,15 +54,35 @@ public class App {
             maxX = getXValues("Enter a maximum x value");
             incX = getXValues("Enter an increment value");
 
+            plugCtrl.setExpression(expression, minX, maxX, incX);
             pyEvaluate(expression, minX, maxX, incX);
         }
         
     }
 
+    private void pyEvaluate(String exp, double min, double max, double inc)
+    {
+        // Need to move and add this to plugin loader menu
+        ProgressPlugin progPlug = new ProgressPlugin();
+        CSVPlugin csvPlug = new CSVPlugin();
+        progPlug.start(plugCtrl);
+        csvPlug.start(plugCtrl);
+
+        PythonInterpreter py = new PythonInterpreter();
+
+        for(double x = min; x <= max; x += inc)
+        {
+            String subExp = exp.replaceAll("x", String.valueOf(x));
+            double result = ((PyFloat) py.eval("float(" + subExp + ")")).getValue();
+            plugCtrl.notifyResultListeners(x, result);
+            // System.out.println("Result: " + result);
+        }
+    }
+
     /**
      * Get expression from users
      */
-    public static String getExpression()
+    private String getExpression()
     {
         String input;
         
@@ -50,24 +98,12 @@ public class App {
     /**
      * get Real number user input
      */
-    public static double getXValues(String prompt)
+    private double getXValues(String prompt)
     {
         System.out.println(prompt);
 
         double input = sc.nextDouble();
 
         return input;
-    }
-
-    public static void pyEvaluate(String exp, double min, double max, double inc)
-    {
-        PythonInterpreter py = new PythonInterpreter();
-
-        for(double x = min; x <= max; x += inc)
-        {
-            String subExp = exp.replaceAll("x", String.valueOf(x));
-            double result = ((PyFloat) py.eval("float(" + subExp + ")")).getValue();
-            System.out.println("Result: " + result);
-        }
     }
 }

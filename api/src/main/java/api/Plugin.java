@@ -1,6 +1,10 @@
+/**
+ * The interface that all plugin should inherit
+ */
 package api;
 
 public interface Plugin
 {
-    void Callback(String exp, double min, double max, double inc);
+    // setup plugin and connect to API plugin controller
+    void start(PluginController plugControl);
 }
