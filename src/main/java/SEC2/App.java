@@ -6,6 +6,9 @@ package SEC2;
 import java.util.*;
 import java.nio.file.*;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+
 import org.python.core.*;
 import org.python.util.*;
 
@@ -38,59 +41,130 @@ public class App
         }
     }
 
-
-    private static final Scanner sc = new Scanner(System.in);
+    private PythonInterpreter py = new PythonInterpreter();
+    private List<Plugin> pluginList = new ArrayList<>();
     private PluginController plugCtrl = new myPluginController();
+    private String expPrompt = "\nEnter a math expression (unknown variables are denoted as x)" + 
+                            "\nExpression:> ";
 
     public void run() 
+    {
+        String op = "";
+        do
+        {
+            op = getStringInput("==SEC Assignment 2==\n1). Load plugins\n2). Enter expression\n0). Exit\nchoice:> ");
+            if (op.equals("1"))
+            {
+                pluginMenu();
+            }
+            else if (op.equals("2"))
+            {
+                expressionMenu();
+            }
+        } while(!op.equalsIgnoreCase("0"));
+        
+    }
+
+    // Load plugins
+    private void pluginMenu()
+    {
+        // Need to move and add this to plugin loader menu
+        // ProgressPlugin progPlug = new ProgressPlugin();
+        // CSVPlugin csvPlug = new CSVPlugin();
+        // progPlug.start(plugCtrl);
+        // csvPlug.start(plugCtrl);
+
+        try
+        {
+            String pluginName = getStringInput("Enter plugin name:> ");
+
+            Class<?> cls= Class.forName(pluginName);
+
+            Plugin plug = (Plugin)cls.newInstance();
+            plug.start(plugCtrl);
+
+            this.loadMathPlugin(cls);
+
+            System.out.println("Plugin: " + pluginName + " has loaded successfully");
+        }
+        catch (RuntimeException e)
+        {
+            System.out.println("[ Runtime Exception: loading plugin at during runtime failed: " + e.getMessage() + " ]");
+        }
+        catch (ReflectiveOperationException e)
+        {
+            System.out.println("[ Reflective Operation Exception: invalid plugin " + e.getMessage() + " ]");
+        }
+    }
+
+    /**
+     * Load and import math plugin functions into python interpreter
+     * @param cls
+     */
+    private void loadMathPlugin(Class<?> cls)
+    {
+        Annotation anno = cls.getAnnotation(MathAnnotation.class);
+
+        if(anno != null)
+        {
+            System.out.println("Math plugin found!");
+            for(Method m : cls.getMethods())
+            {
+                Annotation a = m.getAnnotation(MathAnnotation.class);
+
+                if(Modifier.isStatic(m.getModifiers()) && a != null)
+                {
+                    String importStr = "from " + cls.getName() + " import " + m.getName();
+                    System.out.println(importStr);
+                    this.py.exec(importStr);
+                }
+            }
+        }
+        else
+        {
+            System.out.println("No math plugins!");
+        }
+    }
+
+    private void expressionMenu()
     {
         double minX, maxX, incX;
         String expression;
 
-        expression = getExpression();
+        // Get equation
+        expression = getStringInput(expPrompt);
         if (!expression.isEmpty())
         {
-            minX = getXValues("Enter a minimum x value");
-            maxX = getXValues("Enter a maximum x value");
-            incX = getXValues("Enter an increment value");
+            minX = getXValues("Enter a minimum x value:> ");
+            maxX = getXValues("Enter a maximum x value:> ");
+            incX = getXValues("Enter an increment value:> ");
 
             plugCtrl.setExpression(expression, minX, maxX, incX);
             pyEvaluate(expression, minX, maxX, incX);
         }
-        
     }
 
     private void pyEvaluate(String exp, double min, double max, double inc)
     {
-        // Need to move and add this to plugin loader menu
-        ProgressPlugin progPlug = new ProgressPlugin();
-        CSVPlugin csvPlug = new CSVPlugin();
-        progPlug.start(plugCtrl);
-        csvPlug.start(plugCtrl);
-
-        PythonInterpreter py = new PythonInterpreter();
-
         for(double x = min; x <= max; x += inc)
         {
             String subExp = exp.replaceAll("x", String.valueOf(x));
             double result = ((PyFloat) py.eval("float(" + subExp + ")")).getValue();
             plugCtrl.notifyResultListeners(x, result);
-            // System.out.println("Result: " + result);
         }
     }
 
     /**
      * Get expression from users
      */
-    private String getExpression()
+    private String getStringInput(String prompt)
     {
+        Scanner sc = new Scanner(System.in);
         String input;
         
-        System.out.println("SEC Assignment 2");
-        System.out.println("Enter a math expression (unknown variables are denoted as x");
-        System.out.println("Expression:> ");
+        System.out.print(prompt);
         
-        input = sc.nextLine();
+        input = sc.next();
 
         return input;
     }
@@ -100,7 +174,9 @@ public class App
      */
     private double getXValues(String prompt)
     {
-        System.out.println(prompt);
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print(prompt);
 
         double input = sc.nextDouble();
 

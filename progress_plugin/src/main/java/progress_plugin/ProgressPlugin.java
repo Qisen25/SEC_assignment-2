@@ -11,7 +11,7 @@ public class ProgressPlugin implements Plugin
         {
             double percent = (currInc / progressControl.getMax()) * 100.0;
             // System.out.println(progressControl.getMax());
-            System.out.print("\rProgressing... " + (int)percent + "%");
+            System.out.print("\r[ Progressing... " + (int)percent + "% ]");
             if(percent >= 100.0)
             {
                 System.out.println();

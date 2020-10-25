@@ -26,20 +26,24 @@ public abstract class PluginController
         this.inc = inc;
     }
 
-    // Getters to allow plugins to access the expression, min, max and increment
-    public String getExp() {
+    // Getters to allow plugins to access the expression, min, max and increment fields
+    public String getExp() 
+    {
         return this.exp;
     }
 
-    public double getMin() {
+    public double getMin() 
+    {
         return this.min;
     }
 
-    public double getMax() {
+    public double getMax() 
+    {
         return this.max;
     }
 
-    public double getInc() {
+    public double getInc() 
+    {
         return this.inc;
     }
 }

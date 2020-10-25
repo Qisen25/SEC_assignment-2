@@ -26,7 +26,6 @@ public class CSVPlugin implements Plugin
     @Override
     public void start(PluginController plugControl)
     {
-        this.progressControl = plugControl;
         ProgressCallback pc = new ProgressCallback();
         plugControl.addResultListener(pc);
     }
