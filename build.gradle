@@ -41,6 +41,7 @@ dependencies {
     implementation project(':progress_plugin')
     implementation project(':csv_plugin')
     implementation project(':math_plugin')
+    implementation project(':java_native_loader')
 }
 
 application {

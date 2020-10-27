@@ -9,6 +9,7 @@
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
+    id 'cpp'
 
     // Apply the groovy plugin to also add support for Groovy (needed for Spock)
     id 'groovy'
@@ -33,4 +34,10 @@ dependencies {
     // Use the awesome Spock testing and specification framework even with Java
     testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
     testImplementation 'junit:junit:4.13'
+    
+    // native library
+    implementation project(':native_plugin')
+
+    // our api
+    implementation project(':api')
 }

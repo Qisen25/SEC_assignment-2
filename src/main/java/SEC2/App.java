@@ -14,6 +14,7 @@ import org.python.util.*;
 
 import api.*;
 import csv_plugin.CSVPlugin;
+import javaNative.NativeProgressPlugin;
 import progress_plugin.ProgressPlugin;
 
 import java.io.*;
@@ -41,6 +42,7 @@ public class App
         }
     }
 
+    // our fields
     private PythonInterpreter py = new PythonInterpreter();
     private List<Plugin> pluginList = new ArrayList<>();
     private PluginController plugCtrl = new myPluginController();
@@ -50,6 +52,7 @@ public class App
     public void run() 
     {
         String op = "";
+        System.out.println(System.getProperty("java.library.path"));
         do
         {
             op = getStringInput("==SEC Assignment 2==\n1). Load plugins\n2). Enter expression\n0). Exit\nchoice:> ");
@@ -146,11 +149,18 @@ public class App
 
     private void pyEvaluate(String exp, double min, double max, double inc)
     {
-        for(double x = min; x <= max; x += inc)
+        try
         {
-            String subExp = exp.replaceAll("x", String.valueOf(x));
-            double result = ((PyFloat) py.eval("float(" + subExp + ")")).getValue();
-            plugCtrl.notifyResultListeners(x, result);
+            for(double x = min; x <= max; x += inc)
+            {
+                String subExp = exp.replaceAll("x", String.valueOf(x));
+                double result = ((PyFloat) py.eval("float(" + subExp + ")")).getValue();
+                plugCtrl.notifyResultListeners(x, result);
+            }
+        }
+        catch(Exception e)
+        {
+            System.out.println("[ Error evaluating expression (Most likely math func not imported) ]");
         }
     }
 
