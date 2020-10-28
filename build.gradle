@@ -37,6 +37,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
     testImplementation 'junit:junit:4.12'
     
+    // Our sub directories
     implementation project(':api')
     implementation project(':progress_plugin')
     implementation project(':csv_plugin')
@@ -51,4 +52,6 @@ application {
 
 run {
     standardInput System.in
+    // Set library path to native_plugin lib on gradlew run
+    systemProperty "java.library.path", "./native_plugin/build/libs/native_plugin/shared"
 }

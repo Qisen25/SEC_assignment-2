@@ -4,6 +4,7 @@
 package SEC2;
 
 import java.util.*;
+
 import java.nio.file.*;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -43,7 +44,6 @@ public class App
     }
 
     // our fields
-    private PythonInterpreter py = new PythonInterpreter();
     private List<Plugin> pluginList = new ArrayList<>();
     private PluginController plugCtrl = new myPluginController();
     private String expPrompt = "\nEnter a math expression (unknown variables are denoted as x)" + 
@@ -55,7 +55,7 @@ public class App
         System.out.println(System.getProperty("java.library.path"));
         do
         {
-            op = getStringInput("==SEC Assignment 2==\n1). Load plugins\n2). Enter expression\n0). Exit\nchoice:> ");
+            op = getStringInput("==SEC Assignment 2==\n1). Plugins\n2). Enter expression\n0). Exit\nchoice:> ");
             if (op.equals("1"))
             {
                 pluginMenu();
@@ -68,15 +68,24 @@ public class App
         
     }
 
-    // Load plugins
+    // plugin menu
     private void pluginMenu()
     {
-        // Need to move and add this to plugin loader menu
-        // ProgressPlugin progPlug = new ProgressPlugin();
-        // CSVPlugin csvPlug = new CSVPlugin();
-        // progPlug.start(plugCtrl);
-        // csvPlug.start(plugCtrl);
+        String option = getStringInput("1). Add plugin\n2). View plugins\n0). Back\nchoice:> ");
 
+        if (option.equals("1"))
+        {
+            addPlugins();
+        }
+        else if (option.equals("2"))
+        {
+            printPlugins();
+        }
+    }
+
+    // Add plugins
+    private void addPlugins()
+    {
         try
         {
             String pluginName = getStringInput("Enter plugin name:> ");
@@ -85,8 +94,9 @@ public class App
 
             Plugin plug = (Plugin)cls.newInstance();
             plug.start(plugCtrl);
-
-            this.loadMathPlugin(cls);
+            
+            // Add plugin to list
+            this.pluginList.add(plug);
 
             System.out.println("Plugin: " + pluginName + " has loaded successfully");
         }
@@ -100,11 +110,30 @@ public class App
         }
     }
 
+    // View plugins
+    private void printPlugins()
+    {
+        System.out.println("==Current Loaded Plugins==");
+        for(Plugin p : this.pluginList)
+        {
+            System.out.println(p.getClass().getName());
+        }
+    }
+
+    // Mount plugins
+    private void mountMathPlugins(PythonInterpreter py)
+    {
+        for(Plugin p : this.pluginList)
+        {
+            this.loadMathPlugin(p.getClass(), py);
+        }
+    }
+
     /**
      * Load and import math plugin functions into python interpreter
      * @param cls
      */
-    private void loadMathPlugin(Class<?> cls)
+    private void loadMathPlugin(Class<?> cls, PythonInterpreter py)
     {
         Annotation anno = cls.getAnnotation(MathAnnotation.class);
 
@@ -119,13 +148,9 @@ public class App
                 {
                     String importStr = "from " + cls.getName() + " import " + m.getName();
                     System.out.println(importStr);
-                    this.py.exec(importStr);
+                    py.exec(importStr);
                 }
             }
-        }
-        else
-        {
-            System.out.println("No math plugins!");
         }
     }
 
@@ -151,6 +176,9 @@ public class App
     {
         try
         {
+            PythonInterpreter py = new PythonInterpreter();
+            this.mountMathPlugins(py);
+
             for(double x = min; x <= max; x += inc)
             {
                 String subExp = exp.replaceAll("x", String.valueOf(x));
@@ -160,7 +188,7 @@ public class App
         }
         catch(Exception e)
         {
-            System.out.println("[ Error evaluating expression (Most likely math func not imported) ]");
+            System.out.println("[ Error evaluating expression (Most likely math func not imported) ]" + e.getMessage());
         }
     }
 

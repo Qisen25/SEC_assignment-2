@@ -16,6 +16,7 @@ plugins {
     // id 'cpp-unit-test'
 }
 
+// REFERENCE: this task and library is based on SEC Prac 4 
 tasks.withType(CppCompile).configureEach {
     // Tell the C++ compiler about the JNI. There are a series of C/C++ header files that come 
     // with the JDK. To find the JDK, we consult the 'JAVA_HOME' environment variable.
@@ -46,6 +47,7 @@ library {
     ]
 }
 
+// Create native Library for java_native_loader to access
 model {
     components {
         native_plugin(NativeLibrarySpec) {
@@ -66,3 +68,30 @@ model {
         }
     }
 }
+
+// This is set up just in case build/distribution packages are used to run app
+// If running from zip distribution need to  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/Downloads 
+// Copy the native_plugin.so to home Downloads folder
+task copyToDownloads {
+    doLast {
+        copy {
+            from "build/libs/native_plugin/shared/libnative_plugin.so"
+            into "${System.properties['user.home']}/Downloads"
+        }
+    }
+}
+
+// Remove the native_plugin.so to home Downloads folder
+task removeNativePlugin {
+    doLast {
+        delete {
+            delete "${System.properties['user.home']}/Downloads/libnative_plugin.so"
+        }
+    }
+}
+
+// after build move the lib file to user's download folder
+build.finalizedBy copyToDownloads
+// after clean remove the lib file from user's download folder
+clean.finalizedBy removeNativePlugin
+
