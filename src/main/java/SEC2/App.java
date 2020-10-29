@@ -199,7 +199,6 @@ public class App
                 String subExp = exp.replaceAll("x", String.valueOf(x));
                 double result = ((PyFloat) py.eval("float(" + subExp + ")")).getValue();
                 plugCtrl.notifyResultListeners(x, result);// notifty result listeners
-                System.out.println(result);
             }
         }
         catch(Exception e)

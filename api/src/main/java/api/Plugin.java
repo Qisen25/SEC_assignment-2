@@ -1,5 +1,5 @@
 /**
- * The interface that all plugin should inherit
+ * The interface that all plugin classes should inherit
  */
 package api;
 

@@ -9,6 +9,7 @@ import java.util.List;
 
 public abstract class PluginController
 {
+    // Expression fields
     private String exp;
     private double min;
     private double max;

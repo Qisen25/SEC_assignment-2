@@ -1,4 +1,4 @@
-# SEC Assignment 2 by Kei
+# SEC Assignment 2 by Kei Wang 19126089
 
 ## Plugins
 These are the names of included plugins and how they should be typed when entering plugins.
