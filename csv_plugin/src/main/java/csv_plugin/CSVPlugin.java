@@ -4,6 +4,11 @@ import java.io.*;
 import org.apache.commons.csv.*;
 import api.*;
 
+/**
+ * Plugin to print x and y values to csv file
+ * 
+ * NOTE: File should be printed to root of project if using ./gradlew run
+ */
 public class CSVPlugin implements Plugin
 {
     private final class ProgressCallback implements ResultListener

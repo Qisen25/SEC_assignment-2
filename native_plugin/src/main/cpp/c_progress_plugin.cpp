@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <jni.h>
 
-
+/**
+ * Native c++ plugin for printing out current progress
+ */
 extern "C" 
 {
     JNIEXPORT void JNICALL Java_javaNative_StaticMethods_printProgress(JNIEnv *env, jclass cls, jdouble curr, jdouble end)

@@ -5,6 +5,9 @@ package api;
 
 public interface Plugin
 {
-    // setup plugin and connect to API plugin controller
+    // Setup plugin and connect to API plugin controller.
+    // Plugins implementing this method will be able to
+    // access app's expression, min, max and increment via public accessors 
+    // of the plugin controller.
     void start(PluginController plugControl);
 }

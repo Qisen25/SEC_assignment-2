@@ -2,6 +2,9 @@ package javaNative;
 
 import api.*;
 
+/**
+ * Native progress indicator plugin
+ */
 public class NativeProgressPlugin implements Plugin
 {
     private final class ProgressCallback implements ResultListener
@@ -9,7 +12,6 @@ public class NativeProgressPlugin implements Plugin
         @Override
         public void resultUpdate(double currInc, double yResult)
         {
-            //System.load("/home/beep-beep/libnative_plugin.so");
             // Call C++ code
             StaticMethods.printProgress(currInc, currPlugCtrl.getMax());
         }
@@ -22,7 +24,6 @@ public class NativeProgressPlugin implements Plugin
     {
         this.currPlugCtrl = plugCtrl;
         ProgressCallback pc = new ProgressCallback();
-        plugCtrl.addResultListener(pc);
-        // StaticMethods.printProgress();
+        plugCtrl.addResultListener(pc);// Add to PluginController's list of listeners
     }
 }

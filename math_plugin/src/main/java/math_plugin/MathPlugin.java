@@ -2,7 +2,10 @@ package math_plugin;
 
 import api.*;
 
-@MathAnnotation(name = "Math")
+/**
+ * Math plugin containing math function factorial and fibonacci
+ */
+@MathAnnotation(name = "Math") // Annotate math to make sure it is a class containing math
 public class MathPlugin implements Plugin
 {
     private PluginController plugControl = null;
@@ -10,9 +13,12 @@ public class MathPlugin implements Plugin
     @Override
     public void start(PluginController plugControl)
     {
+        // For this plugin, pluginController doesn't need to be used or accessed
+        // However, if any future changes require the controller, it is good to keep here.
         this.plugControl = plugControl;
     }
 
+    // Annotate to make sure that that this function is a math thing
     @MathAnnotation(name = "FactorialFunction")
     public static long factorial(double x)
     {

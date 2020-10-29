@@ -18,6 +18,7 @@ public abstract class PluginController
     public abstract void addResultListener(ResultListener plugin);
     public abstract void notifyResultListeners(double currInc, double yResult);
 
+    // Must set expression values in main app when before evaluating
     public void setExpression(String exp, double min, double max, double inc)
     {
         this.exp = exp;
