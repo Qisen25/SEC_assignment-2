@@ -168,6 +168,7 @@ public class App
 
         // Get equation
         expression = getStringInput(expPrompt);
+        System.out.println(expression);
         if (!expression.isEmpty())
         {
             minX = getXValues("Enter a minimum x value:> ");
@@ -198,6 +199,7 @@ public class App
                 String subExp = exp.replaceAll("x", String.valueOf(x));
                 double result = ((PyFloat) py.eval("float(" + subExp + ")")).getValue();
                 plugCtrl.notifyResultListeners(x, result);// notifty result listeners
+                System.out.println(result);
             }
         }
         catch(Exception e)
@@ -216,7 +218,7 @@ public class App
         
         System.out.print(prompt);
         
-        input = sc.next();
+        input = sc.nextLine();
 
         return input;
     }
